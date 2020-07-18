@@ -115,6 +115,9 @@ int main(void)
     for (int i = 0; i < input_length; ++i)
         printf("%d %d\n", i, items[i]->n);
 
+    for (int i = 0; i < input_length; ++i)
+        printf("%d %d\n", i, items[i]->n);
+
 
 
 }
