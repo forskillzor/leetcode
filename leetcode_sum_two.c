@@ -5,9 +5,6 @@
  */
 #define NOT -1
 
-int input[] = { 23, 99, 100, 2, 10, 9, 17, 0, 8, 11, 4, 3 };
-int input_length = 12;
-
 struct item
 {
     int idx;
@@ -16,8 +13,7 @@ struct item
 
 struct item **get_items(int *nums, int size)
 {
-    struct item *items[size];
-    struct item **res = items;
+    struct item **items = malloc(sizeof(struct item*) * size);
     
     for (int i = 0; i < size; ++i)
     {
@@ -25,7 +21,7 @@ struct item **get_items(int *nums, int size)
         items[i]->n = nums[i];
         items[i]->idx = i;
     }
-    return res;
+    return items;
 }
 
 void swap(struct item **items, int i, int j)
@@ -39,20 +35,20 @@ void swap(struct item **items, int i, int j)
 
 void qsort_(struct item **items, int left, int right)
 {
-    int i, last;
+    int i, pivot;
     void swap(struct item **items, int i, int j);
 
     if (left >= right)
         return;
 
     swap(items, left, (left + right)/2);
-    last = left;
-    for (i = left + 1; i <= right; ++i)
-        if (items[left]->n > items[right]->n)
-            swap(items, ++last, i);
-    swap(items, left, last);
-    qsort_(items, left, last-1);
-    qsort_(items, last + 1, right);
+    pivot = left;
+    for (i = left + 1; i <= right; i++)
+        if (items[left]->n > items[i]->n)
+            swap(items, ++pivot, i);
+    swap(items, left, pivot);
+    qsort_(items, left, pivot-1);
+    qsort_(items, pivot + 1, right);
 }
 
 int binsearch(int* arr, int size, int target)
@@ -79,45 +75,87 @@ int binsearch(int* arr, int size, int target)
         return -1;
 }
 
-int* twoSum(int* nums, int numsSize, int target, int* returnSize)
+void freemem(struct item **items, int size)
 {
-    int t;
-    int *res = malloc(sizeof (int)*2);
-    int binsearch(int* arr, int size, int target);
-    
-    for (int i = 0, j; i < numsSize; ++i)
-    {
-        t = target - nums[i];
-        
-        if ((j = binsearch(nums, numsSize, t)) != NOT
-           && j != i)
-        {
-            *res = i;
-            *(res+1) = j;
-            *returnSize = 2;
-            return res;
-        }
-    }
-    return NULL;
+    for (int i = 0; i < size; ++i)
+        free(items[i]);
 }
 
-int main(void)
+int* twoSum(int* nums, int numsSize, int target, int* returnSize)
 {
     struct item **get_items(int *nums, int size);
     void qsort_(struct item **items, int left, int right);
+    int binsearch(int* arr, int size, int target);
+    void freemem(struct item **items, int size);
 
-    for (int i = 0; i < input_length; ++i)
-        printf("%d ", input[i]);
-    printf("\n");
+    int t;
+    int *res = malloc(sizeof (int)*2);
+    int n1, n2;
+    struct item **items = get_items(nums, numsSize);
 
-    struct item **items = get_items(input, input_length);
+    qsort_(items, 0, numsSize-1);
 
-    for (int i = 0; i < input_length; ++i)
-        printf("%d %d\n", i, items[i]->n);
+    int idx1 = 0;
+    int idx2 = NOT;
 
-    for (int i = 0; i < input_length; ++i)
-        printf("%d %d\n", i, items[i]->n);
+    for (; idx1 < numsSize && items[idx1]->n < target; ++idx1)
+        ;
+
+    --idx1;
+
+    do 
+    {
+        n1 = items[idx1--]->n;
+        t = target - n1;
+        if ((idx2 = binsearch(nums, numsSize, t)) == NOT
+                                    || (idx1 + 1) == idx2)
+                continue;
+
+        n2 = items[idx2]->n;
+    }
+    while (target - (n1 + n2));
+
+    freemem(items, numsSize);
+    free(items);
+    
+    if (idx2 == NOT)
+        return NULL;
+
+    ++idx1;
+
+    res[0] = idx1 < idx2 ? idx1 : idx2;
+    res[1] = idx1 < idx2 ? idx2 : idx1;
+
+    *returnSize = 2;
+
+    return res;
+}
 
 
+int main(void)
+{
+    int input[] = {2, 4 ,22, 7, 11, 15, 9};
+    int input_length = 7;
+    int target = 19;
+    int returnSize = 2;
+
+    int *nums = NULL;
+
+#define TEST
+#ifdef TEST
+    for (long i = 0; i < 100000000; ++i)
+    {
+        if ((nums = twoSum(input, input_length, target, &returnSize)) != NULL)
+            ;
+    free(nums);
+    }
+    printf("looking for memory usage...\n");
+    getchar();
+#else
+    if ((nums = twoSum(input, input_length, target, &returnSize)) != NULL)
+        printf("result is: [%d %d]\n", nums[0], nums[1]);
+#endif
+    
+    exit(EXIT_SUCCESS);
 
 }
