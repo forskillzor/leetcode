@@ -5,8 +5,8 @@
  */
 #define NOT -1
 
-int input[] = { 23, 99, 100, 2, 10, 9, 17, 0, 8, 11, 4, 3 };
-int input_length = 12;
+const int input[] = { 23, 99, 100, 2, 10, 9, 17, 0, 8, 11, 4, 3 };
+const int input_length = sizeof(input) / sizeof(input[0]);
 
 struct item
 {
@@ -14,33 +14,28 @@ struct item
     int n;
 };
 
-struct item **get_items(int *nums, int size)
+struct item * get_items(int *nums, int size)
 {
-    struct item *items[size];
-    struct item **res = items;
+    struct item *items = malloc(sizeof(struct item) * size);
     
     for (int i = 0; i < size; ++i)
     {
-        items[i] = malloc(sizeof(struct item));
-        items[i]->n = nums[i];
-        items[i]->idx = i;
+        items[i].n = nums[i];
+        items[i].idx = i;
     }
-    return res;
+    return items;
 }
 
-void swap(struct item **items, int i, int j)
+void swap(struct item *items, int i, int j)
 {
-    struct item *temp = NULL;
-
-    temp = items[i];
+    struct item temp = items[i];
     items[i] = items[j];
     items[j] = temp;
 }
 
-void qsort_(struct item **items, int left, int right)
+void qsort_(struct item *items, int left, int right) // не выглядит как правильная имплементация квиксорта
 {
     int i, last;
-    void swap(struct item **items, int i, int j);
 
     if (left >= right)
         return;
@@ -48,7 +43,7 @@ void qsort_(struct item **items, int left, int right)
     swap(items, left, (left + right)/2);
     last = left;
     for (i = left + 1; i <= right; ++i)
-        if (items[left]->n > items[right]->n)
+        if (items[left].n > items[right].n) // вот это не совсем правильное условие
             swap(items, ++last, i);
     swap(items, left, last);
     qsort_(items, left, last-1);
@@ -103,14 +98,11 @@ int* twoSum(int* nums, int numsSize, int target, int* returnSize)
 
 int main(void)
 {
-    struct item **get_items(int *nums, int size);
-    void qsort_(struct item **items, int left, int right);
-
     for (int i = 0; i < input_length; ++i)
         printf("%d ", input[i]);
     printf("\n");
 
-    struct item **items = get_items(input, input_length);
+    struct item *items = get_items(input, input_length);
 
     for (int i = 0; i < input_length; ++i)
         printf("%d %d\n", i, items[i]->n);
