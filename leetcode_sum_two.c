@@ -22,33 +22,9 @@ void swap(int *nums, int *indexes, int i, int j)
     indexes[j] = temp_idx;
 }
 
-void qsort_(int *nums, int *indexes, int left, int right)
+void qsort_(int *nums, int *indexes, int left, int right) 
 {
     int i, pivot;
-    void swap(int *nums, int *indexes, int i, int j);
-
-struct item * get_items(int *nums, int size)
-{
-    struct item *items = malloc(sizeof(struct item) * size);
-    
-    for (int i = 0; i < size; ++i)
-    {
-        items[i].n = nums[i];
-        items[i].idx = i;
-    }
-    return items;
-}
-
-void swap(struct item *items, int i, int j)
-{
-    struct item temp = items[i];
-    items[i] = items[j];
-    items[j] = temp;
-}
-
-void qsort_(struct item *items, int left, int right) // не выглядит как правильная имплементация квиксорта
-{
-    int i, last;
 
     if (left >= right)
         return;
