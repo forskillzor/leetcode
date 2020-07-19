@@ -5,11 +5,8 @@
  */
 #define NOT -1
 
-struct item
-{
-    int idx;
-    int n;
-};
+const int input[] = { 23, 99, 100, 2, 10, 9, 17, 0, 8, 11, 4, 3 };
+const int input_length = sizeof(input) / sizeof(input[0]);
 
 void swap(int *nums, int *indexes, int i, int j)
 {
@@ -29,6 +26,29 @@ void qsort_(int *nums, int *indexes, int left, int right)
 {
     int i, pivot;
     void swap(int *nums, int *indexes, int i, int j);
+
+struct item * get_items(int *nums, int size)
+{
+    struct item *items = malloc(sizeof(struct item) * size);
+    
+    for (int i = 0; i < size; ++i)
+    {
+        items[i].n = nums[i];
+        items[i].idx = i;
+    }
+    return items;
+}
+
+void swap(struct item *items, int i, int j)
+{
+    struct item temp = items[i];
+    items[i] = items[j];
+    items[j] = temp;
+}
+
+void qsort_(struct item *items, int left, int right) // не выглядит как правильная имплементация квиксорта
+{
+    int i, last;
 
     if (left >= right)
         return;
@@ -111,7 +131,6 @@ int* twoSum(int* nums, int numsSize, int target, int* returnSize)
         n2 = nums[idx2];
     }
     while (target - (n1 + n2));
-
 
     if (idx2 == NOT) 
     {
