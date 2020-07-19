@@ -134,27 +134,42 @@ int* twoSum(int* nums, int numsSize, int target, int* returnSize)
     return res;
 }
 
+struct inp_data {
+    int arr[10];
+    int size;
+    int target;
+    int solution[2];
+    int retSize;
+};
 
 int main(void)
 {
-    //int input[] = { 2, 4 ,22, 7, 11, 15, 9 };
-    //int input_length = 7;
-    int input[] = { 3, 2, 4 };
-    int input_length = 3;
-    int target = 6;
-    int returnSize = 2;
+    struct inp_data inputs[] = {
+        {
+            { 2, 7, 11, 15 }, 4, 9, {0, 1}, 2
+        },
+        {
+            { 3, 2, 4 }, 3, 6, {1, 2}, 2
+        }
+    };
 
     int *nums = NULL;
 
 #define TEST
 #ifdef TEST
-    for (long i = 0; i < 100000000; ++i)
+    for (long i = 0; i < 2; ++i)
     {
-        if ((nums = twoSum(input, input_length, target, &returnSize)) != NULL)
-            ;
+        if ((nums = twoSum(inputs[i].arr, inputs[i].size,
+                        inputs[i].target, &inputs[i].retSize)) != NULL) {
+            for(int j = 0; j < inputs[i].size; ++j)
+                printf("%d ", inputs[i].arr[j]);
+            printf("\ntarget: %d\n", inputs[i].target);
+            printf("solution: [%d %d]\n\n", nums[0], nums[1]);
+        }
+
     free(nums);
     }
-    printf("looking for memory usage...\n");
+    printf("Done...\n");
     getchar();
 #else
     if ((nums = twoSum(input, input_length, target, &returnSize)) != NULL) {
