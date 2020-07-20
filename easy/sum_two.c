@@ -122,8 +122,6 @@ int* twoSum(int* nums, int numsSize, int target, int* returnSize)
         free(indexes);
         return NULL;
     }
-
-
 }
 
 struct inp_data {
