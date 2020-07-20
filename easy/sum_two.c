@@ -32,7 +32,7 @@ void qsort_(int *nums, int *indexes, int left, int right)
     swap(nums, indexes, left, (left + right)/2);
     pivot = left;
     for (i = left + 1; i <= right; i++)
-        if (nums[left] < nums[i])
+        if (nums[left] > nums[i])
             swap(nums, indexes, ++pivot, i);
     swap(nums, indexes, left, pivot);
     qsort_(nums, indexes, left, pivot-1);
