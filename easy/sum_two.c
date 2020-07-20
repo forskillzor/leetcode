@@ -8,38 +8,15 @@
 //const int input[] = { 23, 99, 100, 2, 10, 9, 17, 0, 8, 11, 4, 3 };
 //const int input_length = sizeof(input) / sizeof(input[0]);
 
-void swap(int *nums, int *indexes, int i, int j)
-{
-    int temp_val;
-    int temp_idx;
-    
-    temp_val = nums[i];
-    nums[i] = nums[j];
-    nums[j] = temp_val;
+typedef struct {
+    int num;
+    int idx;
+} Node;
 
-    temp_idx = indexes[i];
-    indexes[i] = indexes[j];
-    indexes[j] = temp_idx;
-}
+int cmp (const void *a, const void *b)
+{ return  ((Node*)a)->num - ((Node*)b)->num;  }
 
-void qsort_(int *nums, int *indexes, int left, int right) 
-{
-    int i, pivot;
-
-    if (left >= right)
-        return;
-
-    swap(nums, indexes, left, (left + right)/2);
-    pivot = left;
-    for (i = left + 1; i <= right; i++)
-        if (nums[pivot] > nums[i])
-            swap(nums, indexes, ++pivot, i);
-    swap(nums, indexes, left, pivot);
-    qsort_(nums, indexes, left, pivot-1);
-    qsort_(nums, indexes, pivot + 1, right);
-}
-
-int binsearch(int* arr, int size, int target)
+int binsearch(Node** arr, int size, int target)
 {
     int begin, end, mid;
     begin = 0, end = size-1;
@@ -47,11 +24,11 @@ int binsearch(int* arr, int size, int target)
     while (begin <= end)
     {
         mid = (begin + end) / 2;
-        if (target < arr[mid])
+        if (target < arr[mid]->num)
         {
             end = mid - 1;
         }
-        else if (target > arr[mid])
+        else if (target > arr[mid]->num)
         {
             begin = mid + 1;
         }
@@ -61,22 +38,51 @@ int binsearch(int* arr, int size, int target)
     return -1;
 }
 
-int* get_indexes(int size)
+void swap(Node **arr, int i, int j)
 {
-    int *res = malloc(sizeof(int) * size);
+    Node *temp;
+    temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+
+void qsort_ (Node **arr, int left, int right)
+{
+    int i, last;
+    if (left >= right)
+        return;
+    swap (arr, left, (left+right)/2);
+    last = left;
+    for (i = left+1; i <= right; ++i)
+        if (cmp(arr[i], arr[left]) < 0)
+            swap (arr, ++last, i);
+    swap(arr, left, last);
+    qsort_ (arr, left, last-1);
+    qsort_ (arr, last+1, right);
+}
+
+Node** get_data(int *nums, int size)
+{
+    Node **data = malloc(sizeof(Node*)*size);
 
     for (int i = 0; i < size; ++i)
-        res[i] = i;
-        
-    return res;
+    {
+        data[i] = malloc(sizeof(Node));
+        data[i]->num = nums[i];
+        data[i]->idx = i;
+    }
+    return data;
+}
+
+void memfree(Node **arr, int size)
+{
+    for (int i = 0; i < size; ++i)
+        free(arr[i]);
+    free(arr);
 }
 
 int* twoSum(int* nums, int numsSize, int target, int* returnSize)
 {
-    void qsort_(int *items, int *indexes, int left, int right);
-    int binsearch(int* arr, int size, int target);
-    int* get_indexes(int size);
-
     int t;
     int n1, n2;
 
@@ -84,40 +90,42 @@ int* twoSum(int* nums, int numsSize, int target, int* returnSize)
     int idx2 = NOT;
 
     int *res = malloc(sizeof (int)*2);
-    int *indexes = get_indexes(numsSize);
 
-    qsort_(nums, indexes, 0, numsSize-1);
+    Node **data = get_data(nums, numsSize);
+
+    //qsort(data, numsSize, sizeof(Node), cmp);
+    qsort_(data, 0, numsSize-1);
 
     do {
-        n1 = nums[idx1++];
+        n1 = data[idx1++]->num;
         t = target - n1;
-        while (((idx2 = binsearch(nums, numsSize, t)) == NOT) || (idx1-1 == idx2))
+        while (((idx2 = binsearch(data, numsSize, t)) == NOT) || (idx1-1 == idx2))
         {
             if (idx1 >= numsSize)
                 break;
-            n1 = nums[idx1++];
+            n1 = data[idx1++]->num;
             t = target - n1;
         }
-        n2 = nums[idx2];
+        n2 = data[idx2]->num;
 
     } while ((target - (n1 + n2)) || (idx1-1 == idx2)); 
     --idx1;
 
     if (idx1 == NOT)
     {
-        free(indexes);
+        memfree(data, numsSize);
         return NULL;
     }
 
-    int i1 = indexes[idx1];
-    int i2 = indexes[idx2];
+    int i1 = data[idx1]->idx;
+    int i2 = data[idx2]->idx;
 
     res[0] = i1 < i2 ? i1 : i2;
     res[1] = i1 > i2 ? i1 : i2;
 
     *returnSize = 2;
 
-    free(indexes);
+    memfree(data, numsSize);
 
     return res;
 }
@@ -149,14 +157,14 @@ int main(void)
 
 #define TEST
 #ifdef TEST
-printf("%d %d\n", inputs[7].arr[83], inputs[7].arr[239]);
     for (long i = 0; i < TEST_LENGTH; ++i)
     {
         if ((nums = twoSum(inputs[i].arr, inputs[i].size,
                         inputs[i].target, &inputs[i].retSize)) != NULL) {
             for(int j = 0; j < inputs[i].size; ++j)
                 printf("%d ", inputs[i].arr[j]);
-            printf("\ntarget: %d\n", inputs[i].target);
+            printf("\n");
+            printf("target: %d\n", inputs[i].target);
             printf("result:    [%d %d],\n", nums[0], nums[1]);
             printf("soulution: [%d %d], %s\n\n", inputs[i].solution[0],
                     inputs[i].solution[1],
