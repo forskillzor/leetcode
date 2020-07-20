@@ -32,7 +32,7 @@ void qsort_(int *nums, int *indexes, int left, int right)
     swap(nums, indexes, left, (left + right)/2);
     pivot = left;
     for (i = left + 1; i <= right; i++)
-        if (nums[left] > nums[i])
+        if (nums[pivot] > nums[i])
             swap(nums, indexes, ++pivot, i);
     swap(nums, indexes, left, pivot);
     qsort_(nums, indexes, left, pivot-1);
@@ -42,19 +42,19 @@ void qsort_(int *nums, int *indexes, int left, int right)
 int binsearch(int* arr, int size, int target)
 {
     int begin, end, mid;
-    begin = 0, end = size, mid = size/2;
+    begin = 0, end = size-1, mid = size/2;
     
-    while (target != arr[mid] && begin < mid)
+    while (target != arr[mid] && begin <= mid)
     {
         if (target > arr[mid])
         {
             begin = mid + 1;
-            mid = (end - begin)/2;
+            mid = (end + begin)/2;
         }
         else if (target < arr[mid])
         {
             end = mid - 1;
-            mid = (end - begin)/2;
+            mid = ((end - begin)+1)/2;
         }
     }
     if (target == arr[mid])
@@ -89,7 +89,7 @@ int* twoSum(int* nums, int numsSize, int target, int* returnSize)
     int *indexes = get_indexes(numsSize);
 
     qsort_(nums, indexes, 0, numsSize-1);
-
+    // TODO debug this place ----------------------------
     do 
     {
         n1 = nums[idx1++];
@@ -102,6 +102,7 @@ int* twoSum(int* nums, int numsSize, int target, int* returnSize)
     }
     while (target - (n1 + n2));
     --idx1;
+    // ---------------------------------------------------
 
     if (!(target-(n1 + n2)))
     {
@@ -131,14 +132,13 @@ struct inp_data {
     int solution[2];
     int retSize;
 };
-#define TEST_LENGTH 1
+#define TEST_LENGTH 5
 struct inp_data inputs[] = {
-  //{ { 2, 7, 11, 15 }, 4, 9, { 0, 1 }, 2 },
-  //{ { 3, 2, 4 }, 3, 6, { 1, 2 }, 2 },
-  //{ { 0, 4, 3, 0 }, 4, 0, { 0, 3 }, 2 },
-  //{ {}, 0, 0, {}, 0 },
-  //{ {-100, 99, 2, 0, 22, -1001, 500}, 7, -100, { 0,3 }, 2 },
-    { { -10, -1, -18, -19 }, 4, -19, { 1, 2 }, 2 }
+    { { -10, -1, -18, -19 }, 4, -19, { 1, 2 }, 2 },
+    { {-100, 99, 2, 0, 22, -1001, 500}, 7, -100, { 0,3 }, 2 },
+    { { 2, 7, 11, 15 }, 4, 9, { 0, 1 }, 2 },
+    { { 3, 2, 4 }, 3, 6, { 1, 2 }, 2 },
+    { { 0, 4, 3, 0 }, 4, 0, { 0, 3 }, 2 },
 
 };
 
