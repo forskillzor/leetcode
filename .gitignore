@@ -1,2 +1,6 @@
 sum_two
 CMakeLists.txt
+.idea
+.dist
+.vscode
+*/*cmake-build-debug/
