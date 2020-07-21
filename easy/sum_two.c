@@ -33,12 +33,6 @@ Item* create_items(const int *nums, int size)
     return data;
 }
 
-void add_r_idx(Item *items, int size)
-{
-    for (int i = 0; i < size; ++i)
-        items[i].r_idx = i;
-}
-
 void delete_items(Item *arr)
 { free(arr); }
 
@@ -49,7 +43,6 @@ int* twoSum(int* nums, int numsSize, int target, int* returnSize)
     Item *items = create_items(nums, numsSize);
 
     qsort(items, numsSize, sizeof(Item), cmp);
-    add_r_idx(items, numsSize);
 
     int i = 0;
     while(i < numsSize)
