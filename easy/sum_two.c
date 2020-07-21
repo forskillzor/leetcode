@@ -7,7 +7,6 @@
 typedef struct {
     int num;
     int idx;
-    int r_idx;
 } Item;
 
 int cmp (const void *a, const void *b)
