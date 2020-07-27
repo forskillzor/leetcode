@@ -32,34 +32,41 @@ public:
         if (l1) result = l1;
         else if (l2) result = l2;
 
-        while (l1 != nullptr || l2 != nullptr) {
-            if (l1 != nullptr) {
-                val1 = l1->val;
-                l1 = l1->next;
-            } else val1 = 0;
-            if (l2 != nullptr) {
-                val2 = l2->val;
-                l2 = l2->next;
-            } else val2 = 0;
-
-            value = val1 + val2 + overflow;
+        while (l1 && l2) {
+            value = l1->val + l2->val + overflow;
             overflow = value / 10;
             value = value % 10;
 
             (*resIt)->val = value;
-
-            if ((*resIt)->next == nullptr)
-                if (l1) {
-                    (*resIt)->next = l1;
-                }
-                else if (l2) {
-                    (*resIt)->next = l2;
-
-                }
             resIt = &(*resIt)->next == nullptr ? nullptr : &(*resIt)->next;
+            l1 = l1->next;
+            l2 = l2->next;
+        }
+        if ((*resIt) == nullptr) {
+            if (l1) (*resIt) = l1;
+            else if (l2) (*resIt) = l2;
+        }
+        while (l1) {
+            value = l1->val + overflow;
+            overflow = value / 10;
+            value = value % 10;
+            (*resIt)->val = value;
+            resIt = &(*resIt)->next == nullptr ? nullptr : &(*resIt)->next;
+            l1 = l1->next;
+        }
+        while (l2) {
+            value =  l2->val + overflow;
+            overflow = value / 10;
+            value = value % 10;
+            (*resIt)->val = value;
+            resIt = &(*resIt)->next == nullptr ? nullptr : &(*resIt)->next;
+            l2 = l2->next;
         }
         if (overflow) {
-            (*resIt) = new ListNode(overflow);
+            if (*resIt)
+                (*resIt)->val = overflow;
+            else
+                (*resIt) = new ListNode(overflow);
         }
         return result;
     }
