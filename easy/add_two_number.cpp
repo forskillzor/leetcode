@@ -29,6 +29,9 @@ public:
         int value;
         int val1, val2;
 
+        if (l1) result = l1;
+        else if (l2) result = l2;
+
         while (l1 != nullptr || l2 != nullptr) {
             if (l1 != nullptr) {
                 val1 = l1->val;
@@ -43,9 +46,17 @@ public:
             overflow = value / 10;
             value = value % 10;
 
-            (*resIt) = new ListNode(value);
+            (*resIt)->val = value;
 
-            resIt = &(*resIt)->next;
+            if ((*resIt)->next == nullptr)
+                if (l1) {
+                    (*resIt)->next = l1;
+                }
+                else if (l2) {
+                    (*resIt)->next = l2;
+
+                }
+            resIt = &(*resIt)->next == nullptr ? nullptr : &(*resIt)->next;
         }
         if (overflow) {
             (*resIt) = new ListNode(overflow);
