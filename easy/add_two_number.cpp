@@ -27,23 +27,24 @@ public:
         ListNode **resIt = &result;
         int overflow = 0;
         int value;
+        int val1, val2;
 
-        while (l1 != nullptr && l2 != nullptr) {
-            value = l1->val + l2->val + overflow;
+        while (l1 != nullptr || l2 != nullptr) {
+            if (l1 != nullptr) {
+                val1 = l1->val;
+                l1 = l1->next;
+            } else val1 = 0;
+            if (l2 != nullptr) {
+                val2 = l2->val;
+                l2 = l2->next;
+            } else val2 = 0;
+
+            value = val1 + val2 + overflow;
             overflow = value / 10;
             value = value % 10;
+
             (*resIt) = new ListNode(value);
-            l1 = l1->next, l2 = l2->next;
-            resIt = &(*resIt)->next;
-        }
-        if (l1 != nullptr) it = l1;
-        if (l2 != nullptr) it = l2;
-        while (it != nullptr) {
-            value = it->val + overflow;
-            overflow = value / 10;
-            value = value % 10;
-            (*resIt) = new ListNode(value);
-            it = it->next;
+
             resIt = &(*resIt)->next;
         }
         if (overflow) {
