@@ -1,6 +1,10 @@
 #include<stdlib.h>
 #include<stdio.h>
-/**
+
+/*
+ *      https://leetcode.com/problems/two-sum/
+ */
+/*
  * Note: The returned array must be malloced, assume caller calls free().
  */
 
