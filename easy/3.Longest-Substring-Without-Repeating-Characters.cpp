@@ -15,15 +15,17 @@ public:
     static int lengthOfLongestSubstring(string s) {
         int result = 0;
         string str;
+        auto begin = str.begin();
 
         for (char c : s) {
             if (std::size_t found{str.find(c)}; found != std::string::npos) {
-                str.erase(str.begin(), str.begin() + (found+1));
+                //str.erase(str.begin(), str.begin() + (found+1));
+                //str.begin() += (found + 1);
                 str.push_back(c);
             }
             else {
                 str.push_back(c);
-                if (result < str.length())
+                if (result < str.length(begin, str.end()))
                     result = str.length();
             }
         }
