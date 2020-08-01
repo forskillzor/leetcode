@@ -3,4 +3,8 @@ CMakeLists.txt
 .idea
 .dist
 .vscode
-*/*cmake-build-debug/
+*build*
+*debug*
+*.swp
+CMakeLists.txt.user
+run
