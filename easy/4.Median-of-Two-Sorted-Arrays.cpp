@@ -9,13 +9,13 @@ using namespace std;
 class Solution {
     int maxLeft(vector<int> v1, vector<int> v2, unsigned long i, unsigned long j) {
         --i, --j;
-        if (i >= 0 && j >=0) {
+        if (i >= 0 && j >=0 && i < v1.size() && j < v2.size()) {
             return v1[i] > v2[j] ? v1[i] : v2[j];
         }
-        else if (i >= 0) {
+        else if (i >= 0 && i < v1.size()) {
             return v1[i];
         }
-        else if (j >= 0) {
+        else if (j >= 0 && j < v2.size()) {
             return v2[j];
         }
         else
@@ -23,13 +23,13 @@ class Solution {
     }
     int minRight(vector<int> v1, vector<int> v2, unsigned long i, unsigned long j) {
         ++i, ++j;
-        if (i < v1.size() && j < v2.size()) {
+        if (i >= 0 && j >=0 && i < v1.size() && j < v2.size()) {
             return v1[i] < v2[j] ? v1[i] : v2[j];
         }
-        else if (i < v1.size()) {
+        else if (i >= 0 && i < v1.size()) {
             return v1[i];
         }
-        else if (j < v2.size()) {
+        else if (j >= 0 && j < v2.size()) {
             return v2[j];
         }
         else
@@ -80,12 +80,18 @@ public:
                         && (maxL <= v2[j] && v2[j] <= minR) )
                             return (v1[i] + v2[j]) / 2.0;
             }
-            if (v1[i] > minR || v2[j] < maxL) {
-                imax = imid - 1;
+            if (bigger < minR ) {
+                if (bigger == v1[i])
+                    imax = imid - 1;
+                else
+                    imin = imid + 1;
                 continue;
             }
-            else if (maxL > v1[i] || v2[j] > minR) {
-                imin = imid + 1;
+            else if (bigger > maxL) {
+                if (bigger == v2[j])
+                    imin = imid + 1;
+                else
+                    imax = imid - 1;
                 continue;
             }
         }
@@ -120,6 +126,7 @@ int main() {
     test(vector<int>{ 1, 2 }, vector<int>{ 3, 4 }, 2.5);
     test(vector<int>{ 1, 3, 5 }, vector<int>{ 2, 4, 6 }, 3.5);
     test(vector<int>{ 1, 3, 5, 7, 9 }, vector<int>{ 4, 6, 8 }, 5.5);
+    test(vector<int>{ 1, 3, 5, 7, 9 }, vector<int>{ 6, 8, 10 }, 6.5);
 
 
     return 0;
