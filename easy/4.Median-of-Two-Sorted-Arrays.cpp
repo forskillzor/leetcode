@@ -19,7 +19,7 @@ class Solution {
             return v2[j];
         }
         else
-            return 0;
+            return -9999999;
     }
     int minRight(vector<int> v1, vector<int> v2, unsigned long i, unsigned long j) {
         ++i, ++j;
@@ -33,18 +33,28 @@ class Solution {
             return v2[j];
         }
         else
-            return 0;
+            return 9999999;
     }
     int getJ(int i, int len) { return ((len-2*i) / 2) - 1; }
 public:
     double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-        vector<int> &v1{ ((nums1.size() >= nums2.size() ? nums1 : nums2)) };
-        vector<int> &v2{ ((nums1.size() < nums2.size() ? nums1 : nums2)) };
-        unsigned long totalLength = v1.size() + v2.size();
+        vector<int> v1;
+        vector<int> v2;
         unsigned long i = 0, j = 0;
         unsigned long imin, imax, imid;
+        unsigned long totalLength = v1.size() + v2.size();
         int maxL, minR;
         int bigger;
+
+        if (nums1.size() && nums2.size()) {
+            v1 = { ((nums1.size() >= nums2.size() ? nums1 : nums2)) };
+            v2 = {((nums1.size() < nums2.size() ? nums1 : nums2)) };
+        }
+        else {
+            v1 = { (nums1.size() ? nums1 : nums2) };
+            v2 = { (nums1.size() ? nums1 : nums2) };
+        }
+        totalLength = v1.size() + v2.size();
 
         if (!(totalLength % 2)) {
             imin = (v1.size() - v2.size() ) / 2;
@@ -60,12 +70,12 @@ public:
             i = imid;
             j = getJ(i, totalLength);
 
-            if (i >= 0 && j >=0) {
+            if (i >= 0 && j >=0 && i < v1.size() && j < v2.size()) {
                 bigger = v1[i] > v2[j] ? v1[i] : v2[j];
             }
-            else if (i >= 0)
+            else if (i >= 0 && i < v1.size())
                 bigger = v1[i];
-            else if (j >= 0)
+            else if (j >= 0 && j < v2.size())
                 bigger = v2[j];
 
             if (totalLength % 2) {
@@ -120,6 +130,9 @@ void test(vector<int> vec1, vector<int> vec2, double out )
 }
 
 int main() {
+    test(vector<int>{ 1, 2 }, vector<int>{ -1, 3 }, 1.5);
+    test(vector<int>{ -2, -1}, vector<int>{3}, -1.0);
+    test(vector<int>{}, vector<int>{1}, 1.0);
     test(vector<int>{ 1, 2, 3, 4, 5, 6 }, vector<int>{ 25, 26, 27 }, 5.0);
     test(vector<int>{ 4, 20, 32, 50, 55, 61 }, vector<int>{ 1, 15, 22, 30, 70 }, 30.0);
     test(vector<int>{ 1, 3 }, vector<int>{ 2 }, 2.0);
